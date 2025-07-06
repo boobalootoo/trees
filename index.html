@@ -1,229 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tree Species Cards</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .card-page {
-      width: 21cm;
-      height: 29.7cm;
-      margin: 20px auto;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 1cm;
-      padding: 1cm;
-      box-sizing: border-box;
-      page-break-after: always;
-      position: relative;
-    }
-    .card-container {
-      width: 10cm;
-      height: 10cm;
-      perspective: 1000px;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: auto;
-    }
-    .card {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      transform-style: preserve-3d;
-      transition: transform 0.6s;
-      border-radius: 0.5rem;
-      overflow: hidden;
-    }
-    .card-container:hover .card {
-      transform: rotateY(180deg);
-    }
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-      box-sizing: border-box;
-      transform: translateZ(0);
-      padding: 0.5rem 0.75rem;
-    }
-    .card-front {
-      background-color: #fff;
-      color: #374151;
-    }
-    .card-back {
-      background-color: #fff;
-      transform: rotateY(180deg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-    }
-    .card-back .card-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 0.5rem;
-    }
-    .card-category {
-      font-size: 0.65rem;
-      font-weight: 600;
-      margin-bottom: 0.05rem;
-      margin-top: 0.2rem;
-      color: #1f2937;
-      text-transform: capitalize;
-    }
-    .card-value {
-      font-size: 0.55rem;
-      color: #6b7280;
-      margin-bottom: 0.1rem;
-      line-height: 1.1;
-      word-wrap: break-word;
-      width: 100%;
-    }
-    .qr-code-link {
-      font-size: 0.5rem;
-      color: #4b5563;
-      text-decoration: underline;
-      cursor: pointer;
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      text-align: right;
-      width: 3cm;
-      line-height: 1;
-    }
-    @media print {
-      body { background-color: white; padding: 0; }
-      .card-page { box-shadow: none; margin: 0; padding: 0; display: block; }
-      .card-container { position: absolute; }
-      .card-page:nth-child(odd) .card-container:nth-child(1) { top: 1cm; left: 0.5cm; }
-      .card-page:nth-child(odd) .card-container:nth-child(2) { top: 1cm; left: 10.5cm; }
-      .card-page:nth-child(odd) .card-container:nth-child(3) { top: 11.5cm; left: 0.5cm; }
-      .card-page:nth-child(odd) .card-container:nth-child(4) { top: 11.5cm; left: 10.5cm; }
-      .card-page:nth-child(even) .card-container:nth-child(1) { top: 1cm; left: 10.5cm; }
-      .card-page:nth-child(even) .card-container:nth-child(2) { top: 1cm; left: 0.5cm; }
-      .card-page:nth-child(even) .card-container:nth-child(3) { top: 11.5cm; left: 10.5cm; }
-      .card-page:nth-child(even) .card-container:nth-child(4) { top: 11.5cm; left: 0.5cm; }
-      .card-container:hover .card { transform: rotateY(0deg); }
-      .card-back { transform: rotateY(0deg); }
-      .card-front { display: none; }
-      .card-page:nth-child(odd) .card-back { display: none; }
-      .card-page:nth-child(odd) .card-front { display: flex; }
-      .card-page:nth-child(even) .card-front { display: none; }
-      .card-page:nth-child(even) .card-back { display: flex; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Species Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Styling for each printable page (A4 size) */
+        .card-page {
+            width: 21cm; /* A4 width */
+            height: 29.7cm; /* A4 height */
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            grid-template-rows: repeat(2, 1fr); /* 2 rows */
+            gap: 1cm; /* Space between cards on screen */
+            padding: 1cm; /* Padding inside the page on screen */
+            box-sizing: border-box;
+            page-break-after: always; /* Ensure each page prints separately */
+            position: relative; /* For absolute positioning of cards in print media */
+        }
+
+        /* Container for each individual card, providing flip perspective */
+        .card-container {
+            width: 10cm;
+            height: 10cm;
+            perspective: 1000px; /* For 3D flip effect */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto; /* Center each card within its grid cell */
+        }
+
+        /* The card element itself, handling the flip transformation */
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.6s; /* Smooth flip animation */
+            border-radius: 0.5rem;
+            overflow: hidden; /* Ensure content stays within rounded corners */
+        }
+
+        /* Flip effect on hover */
+        .card-container:hover .card {
+            transform: rotateY(180deg);
+        }
+
+        /* Common styling for both front and back faces of the card */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Hide back of the face when rotated */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the top */
+            align-items: flex-start; /* Align content to the left */
+            border: 1px solid #e5e7eb; /* Tailwind gray-200 border */
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+            /* Add a small translateZ to ensure 3D context for backface-visibility */
+            transform: translateZ(0);
+            padding: 0.5rem 0.75rem; /* Adjusted padding for more space */
+        }
+
+        /* Styling for the front face of the card (details only) */
+        .card-front {
+            background-color: #ffffff;
+            color: #374151; /* Tailwind gray-700 text */
+            text-align: left; /* Align text to the left as in the example image */
+            /* Removed overflow-y: auto; to prevent scrolling */
+        }
+
+        /* Styling for the back face of the card (image only) */
+        .card-back {
+            background-color: #ffffff;
+            transform: rotateY(180deg) translateZ(0); /* Initially rotated to be hidden, added translateZ */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0; /* No padding for full image coverage */
+        }
+
+        /* Styling for images on the back face (full card coverage) */
+        .card-back .card-image {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Use 'contain' to ensure the whole image is visible */
+            border-radius: 0.5rem;
+        }
+
+        /* Typography styles */
+        .card-category {
+            font-size: 0.65rem; /* Further reduced font size for categories */
+            font-weight: 600; /* Tailwind font-semibold */
+            margin-bottom: 0.05rem; /* Further reduced margin */
+            margin-top: 0.2rem; /* Small top margin for separation */
+            color: #1f2937; /* Tailwind gray-800 */
+            text-transform: capitalize; /* Capitalize the first letter of categories */
+        }
+
+        .card-category:first-child {
+            margin-top: 0.1rem; /* Less top margin for the very first category */
+        }
+
+        .card-value {
+            font-size: 0.55rem; /* Further reduced font size for values */
+            color: #6b7280; /* Tailwind gray-500 */
+            margin-bottom: 0.1rem; /* Further reduced space between values */
+            line-height: 1.1; /* Adjusted line height */
+            word-wrap: break-word; /* Allow long words to break and wrap */
+            width: 100%; /* Ensure it takes full width for wrapping */
+        }
+
+        /* Specific style for the QR code link */
+        .qr-code-link {
+            font-size: 0.5rem; /* Even smaller font for QR code link */
+            color: #4b5563;
+            text-decoration: underline;
+            cursor: pointer;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            text-align: right;
+            width: 3cm; /* Give it a fixed width */
+            line-height: 1;
+        }
+
+        /* Print-specific styles for A4 layout and double-sided printing */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .card-page {
+                box-shadow: none;
+                margin: 0;
+                padding: 0; /* No padding on print */
+                width: 21cm;
+                height: 29.7cm;
+                display: block; /* Override grid for absolute positioning */
+            }
+            .card-container {
+                width: 10cm;
+                height: 10cm;
+                margin: 0; /* No margin on print */
+                padding: 0;
+                display: block; /* Override flex centering for precise positioning */
+                position: absolute; /* Use absolute positioning for precise alignment */
+            }
+
+            /* Positioning for front cards on odd pages */
+            .card-page:nth-child(odd) .card-container:nth-child(1) { top: 1cm; left: 0.5cm; }
+            .card-page:nth-child(odd) .card-container:nth-child(2) { top: 1cm; left: 10.5cm; }
+            .card-page:nth-child(odd) .card-container:nth-child(3) { top: 11.5cm; left: 0.5cm; }
+            .card-page:nth-child(odd) .card-container:nth-child(4) { top: 11.5cm; left: 10.5cm; }
+
+            /* Positioning for back cards on even pages (shifted for alignment when flipped) */
+            .card-page:nth-child(even) .card-container:nth-child(1) { top: 1cm; left: 10.5cm; }
+            .card-page:nth-child(even) .card-container:nth-child(2) { top: 1cm; left: 0.5cm; }
+            .card-page:nth-child(even) .card-container:nth-child(3) { top: 11.5cm; left: 10.5cm; }
+            .card-page:nth-child(even) .card-container:nth-child(4) { top: 11.5cm; left: 0.5cm; }
+
+            /* Prevent flip effect on print */
+            .card-container:hover .card {
+                transform: rotateY(0deg);
+            }
+            .card-back {
+                transform: rotateY(0deg); /* Show back face directly on print for back pages */
+            }
+            .card-front {
+                display: none; /* Hide front face on back pages */
+            }
+            /* For the front pages (odd), only show the front face */
+            .card-page:nth-child(odd) .card-back {
+                display: none;
+            }
+            .card-page:nth-child(odd) .card-front {
+                display: flex;
+            }
+            /* For the back pages (even), only show the back face */
+            .card-page:nth-child(even) .card-front {
+                display: none;
+            }
+            .card-page:nth-child(even) .card-back {
+                display: flex;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1 class="text-3xl font-bold text-gray-800 mb-8">Tree Species Cards</h1>
-  <div id="cards-container" class="flex flex-wrap justify-center items-start">
-    <p class="text-gray-600">Loading tree data...</p>
-  </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const csvUrl = 'https://raw.githubusercontent.com/boobalootoo/trees/main/treespreadsheet.csv';
-      const imageUrlBase = 'https://raw.githubusercontent.com/boobalootoo/trees/main/images/';
-      const cardsContainer = document.getElementById('cards-container');
 
-      try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const csvText = await response.text();
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Tree Species Cards</h1>
+    <div id="cards-container" class="flex flex-wrap justify-center items-start">
+        <!-- Cards will be injected here by JavaScript -->
+        <p class="text-gray-600">Loading tree data...</p>
+    </div>
 
-        const lines = csvText.split('\n').filter(line => line.trim() !== '');
-        const headers = lines[0].split(',').map(header => header.trim());
-        const data = lines.slice(1).map(line => {
-          const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-          return headers.reduce((obj, header, index) => {
-            obj[header] = (values[index] || '').replace(/^"|"$/g, '');
-            return obj;
-          }, {});
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // URL for the CSV data from GitHub
+            const csvUrl = 'https://raw.githubusercontent.com/boobalootoo/trees/main/treespreadsheet.csv';
+            // Base URL for the images, assuming they are in the 'images' folder in the same repo
+            const imageUrlBase = 'https://raw.githubusercontent.com/boobalootoo/trees/main/images/';
+            const cardsContainer = document.getElementById('cards-container');
+
+            try {
+                // Fetch CSV data from the provided URL
+                const response = await fetch(csvUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const csvText = await response.text();
+
+                // Parse CSV data
+                const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Split by line and remove empty lines
+                const headers = lines[0].split(',').map(header => header.trim()); // Get headers from the first line
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',').map(value => value.trim()); // Get values for each row
+                    let row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index]; // Map headers to values
+                    });
+                    return row;
+                });
+
+                console.log("Parsed CSV Data:", data); // Log the parsed data for debugging
+
+                cardsContainer.innerHTML = ''; // Clear the "Loading tree data..." message
+
+                let currentPage = document.createElement('div');
+                currentPage.className = 'card-page';
+                cardsContainer.appendChild(currentPage);
+
+                let cardCount = 0;
+
+                // Iterate over each tree data entry to create cards
+                data.forEach(tree => {
+                    // Normalize the tree name for the image filename:
+                    // 1. Ensure tree.Name is a string (handle undefined/null cases)
+                    // 2. Remove any characters that are not letters (a-z, A-Z)
+                    // 3. Convert to lowercase
+                    const imageName = (tree.Name || '').replace(/[^a-zA-Z]/g, '').toLowerCase();
+                    // Construct the full image URL
+                    const imageUrl = `${imageUrlBase}${imageName}.png`; // Assuming .png extension
+
+                    // Create the main container for a single card (for flip effect)
+                    const cardContainer = document.createElement('div');
+                    cardContainer.className = 'card-container';
+
+                    // Create the card element itself
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    // Create the front face of the card (text info only)
+                    const cardFront = document.createElement('div');
+                    cardFront.className = 'card-face card-front';
+                    cardFront.innerHTML = `
+                        <p class="card-category">name</p>
+                        <p class="card-value">${tree.Name || 'N/A'}</p>
+
+                        <p class="card-category">native?</p>
+                        <p class="card-value">${tree['Native?'] || 'N/A'}</p>
+
+                        <p class="card-category">tree size and shape</p>
+                        <p class="card-value">${tree['Tree Size and Shape'] || 'N/A'}</p>
+
+                        <p class="card-category">leaf size and shape</p>
+                        <p class="card-value">${tree['Leaf Size and Shape'] || 'N/A'}</p>
+
+                        <p class="card-category">tree type</p>
+                        <p class="card-value">${tree['Tree Type'] || 'N/A'}</p>
+
+                        <p class="card-category">what it produces</p>
+                        <p class="card-value">${tree['What it produces'] || 'N/A'}</p>
+
+                        <p class="card-category">importance</p>
+                        <p class="card-value">${tree.Importance || 'N/A'}</p>
+
+                        <p class="card-category">look-alikes</p>
+                        <p class="card-value">${tree['Look-alikes'] || 'N/A'}</p>
+
+                        <a href="${tree.Link || 'https://www.woodlandtrust.org.uk/'}" target="_blank" class="qr-code-link">
+                            Qr code to woodland trust page
+                        </a>
+                    `;
+
+                    // Create the back face of the card (image only)
+                    const cardBack = document.createElement('div');
+                    cardBack.className = 'card-face card-back';
+                    cardBack.innerHTML = `
+                        <img src="${imageUrl}" alt="${tree.Name}" class="card-image" onerror="this.onerror=null;this.src='https://placehold.co/100x100/A0A0A0/FFFFFF?text=Image+Not+Found';">
+                    `;
+
+                    // Append front and back faces to the card
+                    card.appendChild(cardFront);
+                    card.appendChild(cardBack);
+                    // Append the card to its container
+                    cardContainer.appendChild(card);
+
+                    // Add the card container to the current printable page
+                    currentPage.appendChild(cardContainer);
+                    cardCount++;
+
+                    // If 4 cards have been added to the current page, create a new page
+                    if (cardCount % 4 === 0) {
+                        currentPage = document.createElement('div');
+                        currentPage.className = 'card-page';
+                        cardsContainer.appendChild(currentPage);
+                    }
+                });
+
+                // After processing all cards, check if the last page is empty and remove it
+                if (cardCount % 4 === 0 && cardCount > 0) {
+                    cardsContainer.removeChild(cardsContainer.lastChild);
+                }
+
+            } catch (error) {
+                console.error('Error fetching or processing CSV:', error);
+                cardsContainer.innerHTML = `<p class="text-red-600">Failed to load tree data. Please check the console for more details.</p>`;
+            }
         });
-
-        cardsContainer.innerHTML = '';
-
-        let currentPage = document.createElement('div');
-        currentPage.className = 'card-page';
-        cardsContainer.appendChild(currentPage);
-
-        let cardCount = 0;
-
-        data.forEach(tree => {
-          const imageName = (tree.Name || '').replace(/[^a-zA-Z]/g, '').toLowerCase();
-          const imageUrl = `${imageUrlBase}${imageName}.png`;
-
-          const cardContainer = document.createElement('div');
-          cardContainer.className = 'card-container';
-
-          const card = document.createElement('div');
-          card.className = 'card';
-
-          const cardFront = document.createElement('div');
-          cardFront.className = 'card-face card-front';
-          cardFront.innerHTML = `
-            <p class="card-category">name</p>
-            <p class="card-value">${tree.Name || 'N/A'}</p>
-            <p class="card-category">native?</p>
-            <p class="card-value">${tree['Native?'] || 'N/A'}</p>
-            <p class="card-category">tree size and shape</p>
-            <p class="card-value">${tree['Tree Size and Shape'] || 'N/A'}</p>
-            <p class="card-category">leaf size and shape</p>
-            <p class="card-value">${tree['Leaf Size and Shape'] || 'N/A'}</p>
-            <p class="card-category">tree type</p>
-            <p class="card-value">${tree['Tree Type'] || 'N/A'}</p>
-            <p class="card-category">what it produces</p>
-            <p class="card-value">${tree['What it produces'] || 'N/A'}</p>
-            <p class="card-category">importance</p>
-            <p class="card-value">${tree.Importance || 'N/A'}</p>
-            <p class="card-category">look-alikes</p>
-            <p class="card-value">${tree['Look-alikes'] || 'N/A'}</p>
-            <a href="${tree.Link || 'https://www.woodlandtrust.org.uk/'}" target="_blank" class="qr-code-link">Qr code to woodland trust page</a>
-          `;
-
-          const cardBack = document.createElement('div');
-          cardBack.className = 'card-face card-back';
-          cardBack.innerHTML = `<img src="${imageUrl}" alt="${tree.Name}" class="card-image" onerror="this.onerror=null;this.src='https://placehold.co/300x300?text=No+Image';">`;
-
-          card.appendChild(cardFront);
-          card.appendChild(cardBack);
-          cardContainer.appendChild(card);
-          currentPage.appendChild(cardContainer);
-
-          cardCount++;
-
-          if (cardCount % 4 === 0 && cardCount < data.length) {
-            currentPage = document.createElement('div');
-            currentPage.className = 'card-page';
-            cardsContainer.appendChild(currentPage);
-          }
-        });
-      } catch (error) {
-        console.error('Error fetching or processing CSV:', error);
-        cardsContainer.innerHTML = `<p class="text-red-600">Failed to load tree data. Please check the console for more details.</p>`;
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
