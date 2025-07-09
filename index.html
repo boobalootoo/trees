@@ -8,7 +8,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
     }
-    .page {
+    .sheet {
       width: 210mm;
       height: 297mm;
       page-break-after: always;
@@ -50,11 +50,10 @@
       width: 100%;
     }
     @media print {
-      body {
-        margin: 0;
-      }
-      #header {
-        display: none;
+      body { margin: 0; }
+      #header { display: none; }
+      .sheet.back {
+        transform: rotate(180deg);
       }
     }
   </style>
@@ -104,48 +103,58 @@
 
       const content = document.getElementById('content');
       let cardCount = 0;
-      let imgPage, infoPage;
 
-      for (const tree of data) {
-        if (cardCount % 9 === 0) {
-          imgPage = document.createElement('div');
-          imgPage.className = 'page';
-          content.appendChild(imgPage);
+      while (cardCount < data.length) {
+        const imgSheet = document.createElement('div');
+        imgSheet.className = 'sheet';
+        content.appendChild(imgSheet);
 
-          infoPage = document.createElement('div');
-          infoPage.className = 'page';
-          content.appendChild(infoPage);
+        const infoSheet = document.createElement('div');
+        infoSheet.className = 'sheet back';
+        content.appendChild(infoSheet);
+
+        const frontCards = [];
+        const backCards = [];
+
+        for (let i = 0; i < 9 && cardCount < data.length; i++, cardCount++) {
+          const tree = data[cardCount];
+          const imageName = (tree.name || '').replace(/[\s-]/g, '').toLowerCase();
+          const imgUrl = `${imageBase}${imageName}.png`;
+          const finalImgUrl = await loadImage(imgUrl);
+
+          // Front card (image)
+          const cardImg = document.createElement('div');
+          cardImg.className = 'card';
+          const img = document.createElement('img');
+          img.src = finalImgUrl;
+          img.alt = tree.name;
+          cardImg.appendChild(img);
+          frontCards.push(cardImg);
+
+          // Back card (info)
+          const cardInfo = document.createElement('div');
+          cardInfo.className = 'card';
+          cardInfo.innerHTML = `
+            <div class="category">Name</div><div class="value">${tree.name || ''}</div>
+            <div class="category">Native?</div><div class="value">${tree['native?'] || ''}</div>
+            <div class="category">Size & Shape</div><div class="value">${tree['tree size and shape'] || ''}</div>
+            <div class="category">Leaf</div><div class="value">${tree['leaf size and shape'] || ''}</div>
+            <div class="category">Type</div><div class="value">${tree['tree type'] || ''}</div>
+            <div class="category">Produces</div><div class="value">${tree['what it produces'] || ''}</div>
+            <div class="category">Importance</div><div class="value">${tree['importance to other species and the environment'] || ''}</div>
+            <div class="category">Look-alikes</div><div class="value">${tree['look-alikes'] || ''}</div>
+          `;
+          backCards.push(cardInfo);
         }
 
-        const imageName = (tree.name || '').replace(/[\s-]/g, '').toLowerCase();
-        const imgUrl = `${imageBase}${imageName}.png`;
-        const finalImgUrl = await loadImage(imgUrl);
+        // Add fronts in normal order
+        frontCards.forEach(card => imgSheet.appendChild(card));
 
-        // Image card
-        const cardImg = document.createElement('div');
-        cardImg.className = 'card';
-        const img = document.createElement('img');
-        img.src = finalImgUrl;
-        img.alt = tree.name;
-        cardImg.appendChild(img);
-        imgPage.appendChild(cardImg);
-
-        // Info card
-        const cardInfo = document.createElement('div');
-        cardInfo.className = 'card';
-        cardInfo.innerHTML = `
-          <div class="category">Name</div><div class="value">${tree.name || ''}</div>
-          <div class="category">Native?</div><div class="value">${tree['native?'] || ''}</div>
-          <div class="category">Size & Shape</div><div class="value">${tree['tree size and shape'] || ''}</div>
-          <div class="category">Leaf</div><div class="value">${tree['leaf size and shape'] || ''}</div>
-          <div class="category">Type</div><div class="value">${tree['tree type'] || ''}</div>
-          <div class="category">Produces</div><div class="value">${tree['what it produces'] || ''}</div>
-          <div class="category">Importance</div><div class="value">${tree['importance to other species and the environment'] || ''}</div>
-          <div class="category">Look-alikes</div><div class="value">${tree['look-alikes'] || ''}</div>
-        `;
-        infoPage.appendChild(cardInfo);
-
-        cardCount++;
+        // Add backs mirrored by row
+        for (let i = 0; i < backCards.length; i += 3) {
+          const row = backCards.slice(i, i + 3).reverse();
+          row.forEach(card => infoSheet.appendChild(card));
+        }
       }
     })();
   </script>
